@@ -36,11 +36,11 @@
    }
   },
   "ES": {
-   "municipalities": 7886,
+   "municipalities": 7207,
    "years": {
     "2026": {
-     "shards": 50,
-     "entries": 7921
+     "shards": 46,
+     "entries": 7242
     },
     "2027": {
      "shards": 0,
