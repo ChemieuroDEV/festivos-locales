@@ -89,6 +89,14 @@ def main():
                 entry = {"name": m["name"], "key": m["key"], "pc": m["pc"], "holidays": hol}
                 if m.get("sub"):
                     entry["sub"] = m["sub"]
+                # Codigo INE y nombres alternativos. Los alternativos son los
+                # que permiten que una carga a "Xixona" encuentre el municipio
+                # publicado como "Jijona": los boletines usan una lengua y la
+                # carga puede venir con la otra.
+                if m.get("ine"):
+                    entry["ine"] = m["ine"]
+                if m.get("alt"):
+                    entry["alt"] = sorted(set(m["alt"]) - {m["key"]})
                 destinos = {pc[:2] for pc in m["pc"] if len(pc) >= 2 and pc[:2].isdigit()}
                 if not destinos:
                     # Sin codigo postal no hay shard posible: el municipio solo
@@ -123,6 +131,8 @@ def main():
             for shard, entries in shards.items():
                 for e in entries:
                     en_shard[e["key"]].add(shard)
+                    for a in e.get("alt", []):
+                        en_shard[a].add(shard)
             nombres = {k: list(v)[0] for k, v in en_shard.items() if len(v) == 1}
             json.dump({"country": iso, "year": year, "generated": index["generated"],
                        "names": nombres},
@@ -132,6 +142,41 @@ def main():
             stats["years"][year] = {"shards": len(shards), "entries": total,
                                     "names": len(nombres)}
         index["countries"][iso] = stats
+
+    # --- festivos nacionales de los paises que OpenHolidays no cubre --------
+    # Comprobado el 15/09/2026: la API devuelve vacio para el Reino Unido,
+    # Finlandia, Dinamarca, Noruega y Grecia; ni Navidad. Son 343 clientes
+    # britanicos y 36 finlandeses cuyas entregas no se comprobaban en absoluto.
+    con_country = []
+    p_paises = os.path.join(BUILD, "paises_sin_cobertura.json")
+    if os.path.exists(p_paises):
+        datos = json.load(io.open(p_paises, encoding="utf-8"))
+        for iso, info in sorted(datos.items()):
+            for year, fest in sorted(info.get("years", {}).items()):
+                if not fest:
+                    continue
+                ydir = os.path.join(OUT, iso, str(year))
+                os.makedirs(ydir, exist_ok=True)
+                doc = {"country": iso, "year": int(year),
+                       "generated": index["generated"], "holidays": fest}
+                json.dump(doc, io.open(os.path.join(ydir, "_country.json"), "w", encoding="utf-8"),
+                          ensure_ascii=False, separators=(",", ":"))
+            if info.get("years"):
+                con_country.append(iso)
+        index["countryFeed"] = con_country
+        print("festivos nacionales publicados para:", ", ".join(con_country))
+
+    # --- metadatos por pais -------------------------------------------------
+    try:
+        import paises as _paises
+        index["countries_meta"] = _paises.construir(
+            set(index["countries"].keys()), con_country)
+        json.dump({"generated": index["generated"], "countries": index["countries_meta"]},
+                  io.open(os.path.join(OUT, "_countries.json"), "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1)
+        print("metadatos de %d paises" % len(index["countries_meta"]))
+    except Exception as e:
+        print("aviso: no se han podido escribir los metadatos de paises:", e)
 
     json.dump(index, io.open(os.path.join(OUT, "index.json"), "w", encoding="utf-8"),
               ensure_ascii=False, indent=1)

@@ -42,14 +42,168 @@
    }
   },
   "ES": {
-   "municipalities": 7886,
+   "municipalities": 8025,
    "years": {
     "2026": {
-     "shards": 50,
-     "entries": 7921,
-     "names": 7803
+     "shards": 51,
+     "entries": 8064,
+     "names": 8827
     }
    }
+  }
+ },
+ "countryFeed": [
+  "DK",
+  "FI",
+  "GB",
+  "GR",
+  "NO"
+ ],
+ "countries_meta": {
+  "ES": {
+   "municipal": true,
+   "note": "Dos festivos locales por municipio, fijados por cada ayuntamiento.",
+   "published": true
+  },
+  "IT": {
+   "municipal": true,
+   "note": "Fiesta del santo patron de cada comune.",
+   "published": true
+  },
+  "PT": {
+   "municipal": true,
+   "note": "Un feriado municipal por concelho.",
+   "published": true
+  },
+  "DE": {
+   "municipal": true,
+   "note": "Algunos municipios de Baviera, Sajonia y Turingia.",
+   "published": false
+  },
+  "CH": {
+   "municipal": true,
+   "note": "Festivos cantonales y, en algunos cantones, comunales.",
+   "published": false
+  },
+  "GR": {
+   "municipal": true,
+   "note": "Fiesta del santo patron de cada ciudad.",
+   "published": false,
+   "countryFeed": true
+  },
+  "FR": {
+   "municipal": false,
+   "note": "Francia no tiene festivos municipales; lo unico local es Alsacia-Mosela, que es departamental.",
+   "published": false
+  },
+  "GB": {
+   "municipal": false,
+   "note": "El Reino Unido no tiene festivos municipales de obligado cumplimiento.",
+   "published": false,
+   "countryFeed": true
+  },
+  "PL": {
+   "municipal": false,
+   "note": "Polonia no tiene festivos municipales.",
+   "published": false
+  },
+  "NL": {
+   "municipal": false,
+   "note": "Paises Bajos no tiene festivos municipales.",
+   "published": false
+  },
+  "BE": {
+   "municipal": false,
+   "note": "Belgica no tiene festivos municipales.",
+   "published": false
+  },
+  "IE": {
+   "municipal": false,
+   "note": "Irlanda no tiene festivos municipales.",
+   "published": false
+  },
+  "AT": {
+   "municipal": false,
+   "note": "Austria no tiene festivos municipales que obliguen a cerrar.",
+   "published": false
+  },
+  "RO": {
+   "municipal": false,
+   "note": "Rumania no tiene festivos municipales.",
+   "published": false
+  },
+  "SE": {
+   "municipal": false,
+   "note": "Suecia no tiene festivos municipales.",
+   "published": false
+  },
+  "FI": {
+   "municipal": false,
+   "note": "Finlandia no tiene festivos municipales.",
+   "published": false,
+   "countryFeed": true
+  },
+  "DK": {
+   "municipal": false,
+   "note": "Dinamarca no tiene festivos municipales.",
+   "published": false,
+   "countryFeed": true
+  },
+  "NO": {
+   "municipal": false,
+   "note": "Noruega no tiene festivos municipales.",
+   "published": false,
+   "countryFeed": true
+  },
+  "CZ": {
+   "municipal": false,
+   "note": "Chequia no tiene festivos municipales.",
+   "published": false
+  },
+  "HU": {
+   "municipal": false,
+   "note": "Hungria no tiene festivos municipales.",
+   "published": false
+  },
+  "BG": {
+   "municipal": false,
+   "note": "Bulgaria no tiene festivos municipales.",
+   "published": false
+  },
+  "HR": {
+   "municipal": false,
+   "note": "Croacia no tiene festivos municipales.",
+   "published": false
+  },
+  "SK": {
+   "municipal": false,
+   "note": "Eslovaquia no tiene festivos municipales.",
+   "published": false
+  },
+  "SI": {
+   "municipal": false,
+   "note": "Eslovenia no tiene festivos municipales.",
+   "published": false
+  },
+  "LT": {
+   "municipal": false,
+   "note": "Lituania no tiene festivos municipales.",
+   "published": false
+  },
+  "LV": {
+   "municipal": false,
+   "note": "Letonia no tiene festivos municipales.",
+   "published": false
+  },
+  "EE": {
+   "municipal": false,
+   "note": "Estonia no tiene festivos municipales.",
+   "published": false
+  },
+  "LU": {
+   "municipal": false,
+   "note": "Luxemburgo no tiene festivos municipales.",
+   "published": false
   }
  }
 }
