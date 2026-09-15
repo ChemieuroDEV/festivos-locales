@@ -1,0 +1,6 @@
+fuentes/
+__pycache__/
+*.pyc
+*.zip
+*.pdf
+*.tmp

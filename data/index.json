@@ -1,0 +1,56 @@
+{
+ "generated": "2026-09-15",
+ "countries": {
+  "PT": {
+   "municipalities": 308,
+   "years": {
+    "2026": {
+     "shards": 79,
+     "entries": 352
+    },
+    "2027": {
+     "shards": 79,
+     "entries": 352
+    },
+    "2028": {
+     "shards": 79,
+     "entries": 352
+    }
+   }
+  },
+  "IT": {
+   "municipalities": 5354,
+   "years": {
+    "2026": {
+     "shards": 93,
+     "entries": 5354
+    },
+    "2027": {
+     "shards": 93,
+     "entries": 5354
+    },
+    "2028": {
+     "shards": 93,
+     "entries": 5354
+    }
+   }
+  },
+  "ES": {
+   "municipalities": 7886,
+   "years": {
+    "2026": {
+     "shards": 50,
+     "entries": 7921
+    },
+    "2027": {
+     "shards": 0,
+     "entries": 0
+    },
+    "2028": {
+     "shards": 0,
+     "entries": 0
+    }
+   }
+  }
+ }
+}

@@ -1,0 +1,74 @@
+name: Actualizar festivos locales
+
+# Proceso anual continuo. Se ejecuta:
+#   - el dia 5 de cada mes, de septiembre a enero, que es cuando las
+#     comunidades autonomas y los boletines publican el calendario del ano
+#     siguiente (y cuando publican correcciones);
+#   - el dia 5 de abril y de julio, por si hay modificaciones a mitad de ano
+#     (Aragon publico una en marzo de 2026);
+#   - a mano, desde la pestana Actions.
+# Si algo cambia respecto a lo publicado, hace commit solo. Si no cambia nada,
+# no commitea: asi el historial dice exactamente cuando cambio cada festivo.
+on:
+  schedule:
+    - cron: '30 4 5 9,10,11,12,1 *'
+    - cron: '30 4 5 4,7 *'
+  workflow_dispatch:
+    inputs:
+      years:
+        description: 'Anos a generar, separados por comas (vacio = los 3 siguientes)'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Instalar dependencias
+        run: pip install pypdf openpyxl
+
+      - name: Descargar fuentes oficiales
+        run: python generador/descargar.py
+        env:
+          YEARS: ${{ github.event.inputs.years }}
+
+      - name: Generar el feed
+        run: python generador/generar.py
+        env:
+          YEARS: ${{ github.event.inputs.years }}
+
+      - name: Comprobar el resultado antes de publicarlo
+        # Si el feed nuevo tiene muchos menos municipios que el publicado, NO
+        # se sube: es senal de que una fuente ha cambiado de formato y el
+        # parser esta devolviendo vacio. Es preferible un feed viejo a un feed
+        # roto: BC conserva lo que ya tenia y la ficha sigue avisando.
+        run: python generador/verificar.py
+
+      - name: Publicar si hay cambios
+        run: |
+          git config user.name 'Festivos (automatico)'
+          git config user.email 'actions@github.com'
+          git add data informe.md
+          if git diff --staged --quiet; then
+            echo 'Sin cambios en los festivos.'
+          else
+            git commit -m "Festivos: actualizacion automatica $(date +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Guardar el informe como artefacto
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informe-festivos
+          path: informe.md
+          if-no-files-found: warn
