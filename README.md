@@ -47,24 +47,53 @@ data/IT/2026/56.json
 
 - `key` es el nombre del municipio en mayúsculas, sin acentos y con espacios simples.
   Business Central normaliza igual el nombre de la ciudad de descarga.
+- `alt` son los nombres alternativos. Es lo que permite que una entrega a Xixona
+  encuentre el municipio publicado como Jijona.
 - `pc` se compara **por prefijo**. En Portugal el código del feed tiene cuatro dígitos
   y el que trae Business Central viene completo, `2430-123`.
 - `sub` es el código de subdivisión de OpenHolidays, para que la extensión pueda además
   aplicar los festivos regionales sin que nadie los teclee.
-- Un prefijo sin datos devuelve **404**, y eso no es un error: significa que ese país o
-  esa zona no tiene festivos municipales publicados. Francia y Alemania no tienen.
+- Un prefijo sin datos devuelve **404**, y eso no es un error.
+
+## Los otros tres ficheros
+
+`_names.json` en cada país y año mapea el nombre del municipio al prefijo donde está.
+Se consulta cuando el código postal de la entrega no lleva a ninguna parte, que pasa más
+de lo que parece: apareció una dirección de Pisa con el código postal de Zaragoza.
+
+`_country.json` trae los festivos **nacionales** de los países que OpenHolidays API no
+cubre. Se comprobó el 15 de septiembre de 2026: esa API devuelve vacío para el Reino
+Unido, Finlandia, Dinamarca, Noruega y Grecia. Sin este fichero, una entrega a Londres
+no detectaba ni el día de Navidad.
+
+`_countries.json` dice de cada país si **tiene** festivos municipales. Sirve para no
+confundir dos cosas distintas: que no exista el concepto, como en Francia o Polonia,
+donde con lo nacional y regional está todo cubierto, y que existan y no los tengamos,
+que es lo único que merece un aviso en pantalla.
 
 ## Cobertura
 
 | País | Municipios | Fuente |
 | --- | --- | --- |
-| Portugal | 308 de 308 concelhos | Feriado municipal oficial de cada concejo, resuelto ya para los años móviles |
+| España | 8.025 | API de festivos de Chemieuro, por código INE, más los boletines autonómicos para los municipios que la API no trae |
 | Italia | 5.354 comuni | Patrón de cada municipio y su día, del infobox de la Wikipedia italiana |
-| España | ver `informe.md` | Portales de datos abiertos autonómicos y boletines oficiales |
+| Portugal | 308 de 308 concelhos | Feriado municipal oficial, con los años móviles ya resueltos |
 
-España no tiene una fuente única: cada comunidad publica lo suyo, diez en formato
-abierto y siete solo en el boletín. El detalle de qué comunidad viene de dónde, y qué
-quedó fuera, está en `informe.md`, que se regenera con los datos.
+Festivos nacionales propios para Reino Unido, Finlandia, Dinamarca, Noruega y Grecia.
+Los del Reino Unido vienen de la publicación oficial del gobierno británico; el resto,
+de Nager.Date, contrastado con OpenHolidays en Suecia e Irlanda, donde coincide al
+cien por cien.
+
+Dónde **no** hay nada que buscar, porque el concepto no existe: Francia (salvo Alsacia
+y Mosela, que es departamental y ya lo da OpenHolidays), Reino Unido, Polonia, Países
+Bajos, Bélgica, Irlanda, Austria, Rumanía, Suecia y los países del este y del norte.
+
+Pendiente: Alemania, donde sí hay festivos por municipio en Baviera, Sajonia y Turingia
+según la confesión mayoritaria, y Suiza, con festivos comunales. Ninguno de los dos
+está cubierto todavía.
+
+El detalle de qué sale de dónde, y qué quedó fuera, está en `informe.md`, que se
+regenera con los datos.
 
 ## Cómo se actualiza
 
