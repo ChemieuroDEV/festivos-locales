@@ -28,13 +28,25 @@ _os.makedirs(BUILD, exist_ok=True)
 
 
 def _anio():
-    """Ano de trabajo: el de YEARS si viene, si no el actual (o el siguiente a
-    partir de septiembre, que es cuando las comunidades ya han publicado)."""
+    """Ano de trabajo.
+
+    Con YEARS puesto, manda YEARS. Sin YEARS, NO se decide por el calendario:
+    se mira que se ha podido descargar de verdad. Se prueba el ano siguiente y,
+    si su fichero de Aragon no esta (es el que antes publica y siempre lleva el
+    ano en el nombre), se trabaja con el ano en curso.
+
+    Decidirlo por el calendario fue un error: en septiembre de 2026 el
+    generador se puso a parsear 2027, que casi ninguna comunidad habia
+    publicado, y el feed perdio provincias enteras."""
     env = (_os.environ.get("YEARS") or "").strip()
     if env:
         return int(env.replace(" ", "").split(",")[0])
     hoy = _dt.date.today()
-    return hoy.year + (1 if hoy.month >= 9 else 0)
+    siguiente = hoy.year + 1
+    marcador = _os.path.join(FUENTES, "ara_%d.csv" % siguiente)
+    if _os.path.exists(marcador) and _os.path.getsize(marcador) > 5000:
+        return siguiente
+    return hoy.year
 
 
 ANIO = _anio()
@@ -117,6 +129,44 @@ def presentable(nombre):
     return " ".join(partes)
 
 
+# Provincia INE (los dos primeros digitos del codigo postal) -> codigo de
+# subdivision de OpenHolidays. Es lo que hace que a un municipio se le apliquen
+# ademas los festivos AUTONOMICOS: el Dia de Aragon (San Jorge, 23 de abril)
+# llega de la API con la subdivision "ES-AR", y solo se aplica a una localidad
+# cuyo codigo empiece por "ES-AR-". Sin esto, Zaragoza se quedaba con sus dos
+# fiestas locales y con las nacionales, pero perdia las autonomicas.
+#
+# Se mapea a nivel de PROVINCIA (ES-AR-ZG), nunca de isla. En Canarias eso deja
+# fuera los festivos insulares (ES-CN-LP-GC y similares), que no valen para toda
+# la provincia: es la lectura conservadora, y la correcta.
+def subdivisiones_por_provincia():
+    p = os.path.join(FUENTES, "subdiv_ES.json")
+    if not os.path.exists(p):
+        print("aviso: falta subdiv_ES.json; los municipios saldran sin subdivision")
+        return {}
+    arbol = json.load(io.open(p, encoding="utf-8"))
+    out = {}
+
+    def texto(nodo, campo):
+        v = nodo.get(campo) or []
+        return norm(v[0]["text"]) if v else ""
+
+    def walk(nodos):
+        for n in nodos:
+            ine = PROV.get(texto(n, "name"))
+            if ine and texto(n, "category") != "ISLA":
+                # Sin setdefault a proposito: los hijos se recorren despues que
+                # el padre, asi que gana el codigo MAS ESPECIFICO. En Murcia,
+                # Madrid o Asturias la comunidad y la provincia se llaman igual,
+                # y quedarse con el provincial (ES-MC-MU) es estrictamente
+                # mejor: capta tambien los festivos que llegan como ES-MC.
+                out[ine] = n["code"]
+            walk(n.get("children", []))
+
+    walk(arbol)
+    return out
+
+
 def geonames():
     """Devuelve (por_ine, por_nombre_provincia, nombre_oficial_por_ine)."""
     por_ine = collections.defaultdict(set)
@@ -147,6 +197,7 @@ def geonames():
 def main():
     rows = json.load(io.open(os.path.join(BUILD, "es_holidays.json"), encoding="utf-8"))
     por_ine, por_nom, nombre_ine, nombre_cp = geonames()
+    subs = subdivisiones_por_provincia()
 
     grupos = collections.defaultdict(lambda: {"name": None, "prov": "", "ine": "",
                                               "fuente": None, "hol": []})
@@ -195,7 +246,11 @@ def main():
         # un nucleo, y entonces los festivos acabarian firmados por el municipio
         # equivocado. Solo se arregla el TODO EN MAYUSCULAS de los boletines.
         nombre = nombre_ine.get(g["ine"]) or presentable(g["name"])
-        out.append({"key": norm(nombre)[:50], "name": nombre, "sub": "",
+        # La provincia sale del codigo postal, que es lo unico que tenemos para
+        # todos los municipios: el codigo INE solo lo publican cinco comunidades.
+        prov_cp = sorted(cps)[0][:2]
+        out.append({"key": norm(nombre)[:50], "name": nombre,
+                    "sub": subs.get(g["prov"] or prov_cp, ""),
                     "pc": sorted(cps), "holidays": hol})
 
     # Dos filas del mismo municipio (por ejemplo una con INE y otra sin el) se
@@ -226,6 +281,8 @@ def main():
     c = collections.Counter(m["key"] for m in final)
     dup = [k for k, n in c.items() if n > 1]
     rep.write("\nclaves repetidas: %d  %s\n" % (len(dup), dup[:12]))
+    rep.write("con subdivision (para los festivos autonomicos): %d de %d\n"
+              % (sum(1 for m in final if m["sub"]), len(final)))
     rep.write("\n")
     for nombre in ("Murcia", "Zaragoza", "Barcelona", "Madrid", "Sevilla", "Bilbao", "Pamplona",
                    "Alcantarilla", "Molina de Segura", "Ibi", "Arganda del Rey", "Rubi",

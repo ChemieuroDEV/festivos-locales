@@ -60,6 +60,7 @@ def fuentes(anio):
         ("concelhos_pt.csv", "https://raw.githubusercontent.com/centraldedados/codigos_postais/master/data/concelhos.csv"),
         ("comuni_it.json", "https://raw.githubusercontent.com/matteocontrini/comuni-json/master/comuni.json"),
         ("subdiv_IT.json", "https://openholidaysapi.org/Subdivisions?countryIsoCode=IT&languageIsoCode=IT"),
+        ("subdiv_ES.json", "https://openholidaysapi.org/Subdivisions?countryIsoCode=ES&languageIsoCode=ES"),
         # --- Portugal: feriados municipales ya resueltos por ano
         ("icalendario_pt.html", "https://icalendario.pt/feriados/municipais/"),
     ]

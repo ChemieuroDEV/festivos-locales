@@ -26,13 +26,25 @@ _os.makedirs(BUILD, exist_ok=True)
 
 
 def _anio():
-    """Ano de trabajo: el de YEARS si viene, si no el actual (o el siguiente a
-    partir de septiembre, que es cuando las comunidades ya han publicado)."""
+    """Ano de trabajo.
+
+    Con YEARS puesto, manda YEARS. Sin YEARS, NO se decide por el calendario:
+    se mira que se ha podido descargar de verdad. Se prueba el ano siguiente y,
+    si su fichero de Aragon no esta (es el que antes publica y siempre lleva el
+    ano en el nombre), se trabaja con el ano en curso.
+
+    Decidirlo por el calendario fue un error: en septiembre de 2026 el
+    generador se puso a parsear 2027, que casi ninguna comunidad habia
+    publicado, y el feed perdio provincias enteras."""
     env = (_os.environ.get("YEARS") or "").strip()
     if env:
         return int(env.replace(" ", "").split(",")[0])
     hoy = _dt.date.today()
-    return hoy.year + (1 if hoy.month >= 9 else 0)
+    siguiente = hoy.year + 1
+    marcador = _os.path.join(FUENTES, "ara_%d.csv" % siguiente)
+    if _os.path.exists(marcador) and _os.path.getsize(marcador) > 5000:
+        return siguiente
+    return hoy.year
 
 
 ANIO = _anio()

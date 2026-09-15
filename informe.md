@@ -4,20 +4,12 @@ Generado el 2026-09-15. Se regenera con los datos, así que siempre describe lo 
 
 | País | Municipios | Años publicados |
 | --- | --- | --- |
-| ES | 7207 | 2026 |
+| ES | 7886 | 2026 |
 | IT | 5354 | 2026, 2027, 2028 |
 | PT | 308 | 2026, 2027, 2028 |
 
 Un municipio que no aparece no es un municipio sin festivos: es un municipio del
 que no tenemos el dato. Business Central los distingue y lo dice en pantalla.
-
-## Descarga de fuentes
-
-32 bajadas correctamente, **3 con fallo**:
-
-- `cnt_2026.pdf`: URLError: <urlopen error [Errno 110] Connection timed out>
-- `cnt_2027.pdf`: URLError: <urlopen error [Errno 110] Connection timed out>
-- `eus_2027.json`: HTTPError: HTTP Error 404: Not Found
 
 ## España — parseo de las 17 comunidades
 
@@ -26,9 +18,9 @@ que no tenemos el dato. Business Central los distingue y lo dice en pantalla.
 FESTIVOS LOCALES DE ESPANA 2026 - INFORME DE PARSEO
 ==============================================================================
 
-Total de filas obtenidas: 16748
-Municipios distintos:     8757
-Filas sin INE:            7442 (44.4%)
+Total de filas obtenidas: 17861
+Municipios distintos:     9455
+Filas sin INE:            7929 (44.4%)
 
 ------------------------------------------------------------------------------
 RESUMEN POR COMUNIDAD
@@ -38,13 +30,13 @@ CAT   Cataluna                  2794     1398     2.00        0       0
 ARA   Aragon                    1355      687     1.97      225       0
 MAD   Madrid                     338      169     2.00        0       0
 AND   Andalucia                 1548      774     2.00     1548       0
-PV    Pais Vasco                   0        0     0.00        0       0
-GAL   Galicia                      0        0     0.00        0       0
+PV    Pais Vasco                 283      283     1.00      283      15
+GAL   Galicia                    626      313     2.00        0       0
 CYL   Castilla y Leon           5044     2564     1.97        0     122
 CLM   Castilla-La Mancha        2058     1030     2.00     2058       0
 NAV   Navarra                    655      655     1.00      655      39
 RIO   La Rioja                   342      174     1.97      342       1
-CNT   Cantabria                    0        0     0.00        0       0
+CNT   Cantabria                  204      102     2.00      204       0
 AST   Asturias                   164       78     2.10      164       4
 EXT   Extremadura                884      444     1.99      884       0
 BAL   Illes Balears              212      107     1.98      212       0
@@ -55,16 +47,14 @@ MUR   Murcia                      90       45     2.00       90       0
 ------------------------------------------------------------------------------
 AVISOS DE CALIDAD (lo normal es 2 festivos locales por municipio)
 ------------------------------------------------------------------------------
-[VACIA]  Pais Vasco (PV): 0 filas. Ver la seccion de errores.
-[VACIA]  Galicia (GAL): 0 filas. Ver la seccion de errores.
+[ESPERADA] Pais Vasco (PV): media 1.00. el dataset de Open Data Euskadi solo publica UN festivo local por municipio (284 filas, 284 municipios). Es una limitacion de la fuente, no del parser: falta el segundo festivo.
 [ESPERADA] Navarra (NAV): media 1.00. en Navarra el segundo festivo local es el 3 de diciembre (San Francisco Javier) para toda la comunidad, y es autonomico: no se anyade aqui. Media 1.00 es lo correcto.
-[VACIA]  Cantabria (CNT): 0 filas. Ver la seccion de errores.
 
 ------------------------------------------------------------------------------
 DISTRIBUCION: CUANTOS FESTIVOS TIENE CADA MUNICIPIO (global)
 ------------------------------------------------------------------------------
-  1 festivo         781 municipios
-  2 festivos       7968 municipios
+  1 festivo        1064 municipios
+  2 festivos       8383 municipios
   3 festivos          5 municipios
   4 festivos          1 municipios
   6 festivos          2 municipios
@@ -77,13 +67,13 @@ CAT   Cataluna                     2    1396       0       0
 ARA   Aragon                      19     668       0       0
 MAD   Madrid                       0     169       0       0
 AND   Andalucia                    0     774       0       0
-PV    Pais Vasco                   0       0       0       0
-GAL   Galicia                      0       0       0       0
+PV    Pais Vasco                 283       0       0       0
+GAL   Galicia                      0     313       0       0
 CYL   Castilla y Leon             84    2480       0       0
 CLM   Castilla-La Mancha           3    1026       1       0
 NAV   Navarra                    655       0       0       0
 RIO   La Rioja                     6     168       0       0
-CNT   Cantabria                    0       0       0       0
+CNT   Cantabria                    0     102       0       0
 AST   Asturias                     6      65       4       3
 EXT   Extremadura                  4     440       0       0
 BAL   Illes Balears                2     105       0       0
@@ -98,6 +88,7 @@ FILAS DESCARTADAS Y POR QUE
   AST        2  fecha ilegible
   CYL      122  sin fecha en el origen (fiesta movil descrita en prosa o celda vacia)
   NAV       39  fecha movil descrita en prosa (ej. 'Tercer sabado de septiembre'), sin dia concreto: no se inventa
+  PV        15  festivo autonomico o de territorio, no local
   RIO        1  linea sin fecha concreta (ej. 'RestantesmunicipiosdeLaRioja:lasdosfiestastradicionalesdecadaunodeello')
   VAL        1  el propio DOGV dice 'SIN DETERMINAR': el municipio no ha fijado fechas (SACAÑET)
   VAL        1  el propio DOGV dice 'SIN DETERMINAR': el municipio no ha fijado fechas (VILANOVA D'ALCOLEA)
@@ -110,6 +101,7 @@ NOTAS DE CADA FUENTE
   ARA   leido como utf-8-sig
   MAD   las entidades locales menores (entidad_codigo != 00) llevan el INE de su municipio matriz y el campo extra municipio_matriz
   AND   la fuente no trae INE y la descripcion es siempre 'FIESTA LOCAL EN X (PROV)', asi que el nombre de la fiesta queda vacio
+  PV    municipalitycode es codigo EUSTAT, NO es INE: se deja ine vacio a proposito
   CYL   la columna 'municipio' es en realidad la localidad; varias localidades comparten INE
   NAV   el 3 de diciembre (San Francisco Javier) es autonomico en toda Navarra y NO se anyade aqui
   RIO   el PDF del BOR sale sin espacios; los nombres se despegan contra el listado de municipios de La Rioja (0 nombres) y, si no casa, por heuristica
@@ -123,35 +115,7 @@ NOTAS DE CADA FUENTE
 ------------------------------------------------------------------------------
 PARSERS QUE HAN FALLADO
 ------------------------------------------------------------------------------
-  === PV ===
-    Traceback (most recent call last):
-      File "/home/runner/work/festivos-locales/festivos-locales/generador/parse_es.py", line 1436, in main
-        rs = fn() or []
-             ^^^^
-      File "/home/runner/work/festivos-locales/festivos-locales/generador/parse_es.py", line 455, in parse_pv
-        txt, _ = read_text(os.path.join(SRC, "eus_%d.json" % ANIO))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/home/runner/work/festivos-locales/festivos-locales/generador/parse_es.py", line 288, in read_text
-        with io.open(path, "r", encoding=enc, newline="") as f:
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-    FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/festivos-locales/festivos-locales/fuentes/eus_2027.json'
-  === CNT ===
-    Traceback (most recent call last):
-      File "/home/runner/work/festivos-locales/festivos-locales/generador/parse_es.py", line 1436, in main
-        rs = fn() or []
-             ^^^^
-      File "/home/runner/work/festivos-locales/festivos-locales/generador/parse_es.py", line 1086, in parse_cnt
-        pages = pdf_pages("cnt_%d.pdf" % ANIO, layout=True)
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/home/runner/work/festivos-locales/festivos-locales/generador/parse_es.py", line 774, in pdf_pages
-        reader = PdfReader(os.path.join(SRC, name))
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/pypdf/_reader.py", line 151, in __init__
-        self._initialize_stream(stream)
-      File "/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/pypdf/_reader.py", line 172, in _initialize_stream
-        with open(stream, "rb") as fh:
-             ^^^^^^^^^^^^^^^^^^
-    FileNotFoundError: [Errno 2] No such file or directory: '/home/runner/work/festivos-locales/festivos-locales/fuentes/cnt_2027.pdf'
+Ninguno: los 17 parsers han terminado sin excepcion.
 
 ------------------------------------------------------------------------------
 LOS 10 PRIMEROS EJEMPLOS DE CADA COMUNIDAD
@@ -205,11 +169,29 @@ LOS 10 PRIMEROS EJEMPLOS DE CADA COMUNIDAD
     -      ALBOLODUY                        ALMERÍA                2026-08-17  -
     -      ALBOLODUY                        ALMERÍA                2026-09-14  -
 
-  [PV] Pais Vasco  (0 filas)
-    (sin datos)
+  [PV] Pais Vasco  (283 filas)
+    -      Abadiño                          Bizkaia                2026-05-15  San Trokaz
+    -      Abanto y Ciérvana-Abanto Zierben Bizkaia                2026-06-15  San Antonio
+    -      Ajangiz                          Bizkaia                2026-05-14  La Ascensión
+    -      Alonsotegi                       Bizkaia                2026-09-02  San Antolín
+    -      Amorebieta-Etxano                Bizkaia                2026-07-16  Ntra. Sra. del Carmen
+    -      Amoroto                          Bizkaia                2026-07-03  San Martín
+    -      Arakaldo                         Bizkaia                2026-07-18  Santa Marina
+    -      Arantzazu                        Bizkaia                2026-06-29  San Pedro
+    -      Areatza                          Bizkaia                2026-08-24  San Bartolomé
+    -      Arrankudiaga-Zollo               Bizkaia                2026-06-29  San Pedro
 
-  [GAL] Galicia  (0 filas)
-    (sin datos)
+  [GAL] Galicia  (626 filas)
+    15001  Abegondo                         A CORUNA               2026-02-17  Martes de Entroido
+    15001  Abegondo                         A CORUNA               2026-06-29  San Pedro
+    15002  Ames                             A CORUNA               2026-04-06  Luns de Pascua
+    15002  Ames                             A CORUNA               2026-05-14  festa da Ascensión
+    15003  Aranga                           A CORUNA               2026-02-17  Martes de Entroido
+    15003  Aranga                           A CORUNA               2026-03-20  -
+    15004  Ares                             A CORUNA               2026-02-18  Mércores de Cinza
+    15004  Ares                             A CORUNA               2026-05-26  Voto de Chanteiro
+    15005  Arteixo                          A CORUNA               2026-02-17  Martes de Entroido
+    15005  Arteixo                          A CORUNA               2026-09-16  Santa Eufemia
 
   [CYL] Castilla y Leon  (5044 filas)
     24090  LUCILLO                          LEÓN                   2026-01-02  -
@@ -259,8 +241,17 @@ LOS 10 PRIMEROS EJEMPLOS DE CADA COMUNIDAD
     -      Larriba                          LA RIOJA               2026-09-07  San Juan
     -      Torremuña                        LA RIOJA               2026-08-05  La Virgen Blanca
 
-  [CNT] Cantabria  (0 filas)
-    (sin datos)
+  [CNT] Cantabria  (204 filas)
+    -      ALFOZ DE LLOREDO                 CANTABRIA              2026-05-15  SAN ISIDRO LABRADOR
+    -      ALFOZ DE LLOREDO                 CANTABRIA              2026-07-27  SANTA ANA
+    -      AMPUERO                          CANTABRIA              2026-09-08  NATIVIDAD DE NTRA SRA VIRGEN NIÑA DE A
+    -      AMPUERO                          CANTABRIA              2026-09-21  SAN MATEO
+    -      ANIEVAS                          CANTABRIA              2026-07-27  -
+    -      ANIEVAS                          CANTABRIA              2026-08-05  FESTIVIDAD DE LAS NIEVES
+    -      ARENAS IGUÑA                     CANTABRIA              2026-07-16  LA VIRGEN DEL CARMEN
+    -      ARENAS IGUÑA                     CANTABRIA              2026-09-08  VIRGEN DEL CAMINO
+    -      ARGOÑOS                          CANTABRIA              2026-08-03  SAN ESTEBAN
+    -      ARGOÑOS                          CANTABRIA              2026-08-17  SAN ROQUIN
 
   [AST] Asturias  (164 filas)
     -      ALLANDE                          ASTURIAS               2026-09-09  -
@@ -342,8 +333,8 @@ COMPROBACIONES CONCRETAS PEDIDAS
 [ OK ] Barcelona                                ine=08019   fechas=2026-05-25, 2026-09-24
 [ OK ] Sevilla                                  ine=-       fechas=2026-04-22, 2026-06-04
 [ OK ] Valencia                                 ine=-       fechas=2026-01-22, 2026-04-13
-[FALLO] Bilbao                                   NO aparece en la salida (PV)
-[FALLO] Vigo                                     NO aparece en la salida (GAL)
+[FALLO] Bilbao                                   ine=-       fechas=2026-08-28  solo 1 fecha(s) -> NO es fallo del parser: el dataset de Open Data Euskadi solo publica UN festivo local por municipio (284 filas, 284 municipios). Es una limitacion de la fuente, no del parser: falta el segundo festivo.
+[ OK ] Vigo                                     ine=36057   fechas=2026-03-28, 2026-08-17
 [ OK ] Badajoz debe tener 17/02 y 24/06         ine=-       fechas=2026-02-17, 2026-06-24
 
 Nota sobre el INE: lo traen CAT, ARA, MAD, GAL y CYL (y MAD lo compone
@@ -352,17 +343,17 @@ En esas comunidades `ine` va vacio a proposito; el cruce por nombre es
 el paso siguiente del pipeline, no de este script.
 
 ==============================================================================
-Tiempos por parser (s): CAT=0.3, ARA=0.0, MAD=0.0, AND=0.0, PV=0.0, GAL=0.0, CYL=0.1, CLM=0.0, NAV=0.0, RIO=0.4, CNT=0.0, AST=0.0, EXT=0.6, BAL=0.0, CAN=0.0, VAL=0.6, MUR=0.3
+Tiempos por parser (s): CAT=0.2, ARA=0.0, MAD=0.0, AND=0.0, PV=0.0, GAL=0.0, CYL=0.1, CLM=0.0, NAV=0.0, RIO=0.7, CNT=0.2, AST=0.0, EXT=0.3, BAL=0.0, CAN=0.0, VAL=0.3, MUR=0.2
 ==============================================================================
 ```
 
 ## España — cruce con códigos postales
 
 ```
-municipios con festivos: 7421
-cruzados con codigo postal: 7207 ({'nombre': 4808, 'ine': 2399})
-sin cruzar: 214
-fallos por fuente: {'VAL': 36, 'CYL': 35, 'CLM': 28, 'ARA': 27, 'NAV': 26, 'RIO': 21, 'EXT': 11, 'AND': 10, 'CAT': 8, 'AST': 5, 'MAD': 4, 'BAL': 2, 'CAN': 1}
+municipios con festivos: 8119
+cruzados con codigo postal: 7886 ({'nombre': 5186, 'ine': 2700})
+sin cruzar: 233
+fallos por fuente: {'VAL': 36, 'CYL': 35, 'CLM': 28, 'ARA': 27, 'NAV': 26, 'RIO': 21, 'PV': 12, 'EXT': 11, 'AND': 10, 'CAT': 8, 'CNT': 7, 'AST': 5, 'MAD': 4, 'BAL': 2, 'CAN': 1}
 filas sin provincia deducible: {('CAN', '(vacia)'): 176}
 
 primeros 30 sin cruzar:
@@ -397,14 +388,14 @@ primeros 30 sin cruzar:
   ARA  44  Santa Eulalia del Campo
   ARA  44  Veguillas de la Sierra
 
-claves repetidas: 29  ['TURRILLAS', 'VALSEQUILLO', 'DOMINGO PEREZ', 'CORTEGANA', 'ALINS', 'MONTESA', 'SAN JORGE', 'MIERES', 'MOYA', 'VALVERDE', 'CABANES', 'TORRENT']
+claves repetidas: 34  ['TURRILLAS', 'VALSEQUILLO', 'DOMINGO PEREZ', 'CORTEGANA', 'ALINS', 'MONTESA', 'SAN JORGE', 'MIERES', 'MOYA', 'VALVERDE', 'CABANES', 'TORRENT']
 
 CHECK Murcia                 -> [(['30001', '30002'], ['2026-04-07', '2026-09-15'])]
 CHECK Zaragoza               -> [(['50001', '50002'], ['2026-01-29', '2026-03-05'])]
 CHECK Barcelona              -> [(['08001', '08002'], ['2026-05-25', '2026-09-24'])]
 CHECK Madrid                 -> [(['28001', '28002'], ['2026-05-15', '2026-11-09'])]
 CHECK Sevilla                -> [(['41001', '41002'], ['2026-04-22', '2026-06-04'])]
-CHECK Bilbao                 -> NO CRUZA
+CHECK Bilbao                 -> [(['48001', '48002'], ['2026-08-28'])]
 CHECK Pamplona               -> [(['31001', '31002'], ['2026-11-30'])]
 CHECK Alcantarilla           -> [(['30820'], ['2026-05-29', '2026-09-15'])]
 CHECK Molina de Segura       -> [(['30500', '30506'], ['2026-01-22', '2026-09-21'])]
@@ -413,8 +404,8 @@ CHECK Arganda del Rey        -> [(['28500'], ['2026-09-11', '2026-09-14'])]
 CHECK Rubi                   -> [(['08191'], ['2026-02-16', '2026-06-29'])]
 CHECK Terrassa               -> [(['08221', '08222'], ['2026-04-02', '2026-07-06'])]
 CHECK Jerez de la Frontera   -> [(['11400', '11401'], ['2026-05-11', '2026-09-24'])]
-CHECK Vitoria-Gasteiz        -> NO CRUZA
-CHECK Santander              -> NO CRUZA
+CHECK Vitoria-Gasteiz        -> [(['01001', '01002'], ['2026-08-05'])]
+CHECK Santander              -> [(['39001', '39002'], ['2026-05-25', '2026-07-25'])]
 ```
 
 ## Portugal e Italia
