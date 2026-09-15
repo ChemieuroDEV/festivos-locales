@@ -6,15 +6,18 @@
    "years": {
     "2026": {
      "shards": 79,
-     "entries": 352
+     "entries": 352,
+     "names": 275
     },
     "2027": {
      "shards": 79,
-     "entries": 352
+     "entries": 352,
+     "names": 275
     },
     "2028": {
      "shards": 79,
-     "entries": 352
+     "entries": 352,
+     "names": 275
     }
    }
   },
@@ -23,15 +26,18 @@
    "years": {
     "2026": {
      "shards": 93,
-     "entries": 5354
+     "entries": 5354,
+     "names": 5352
     },
     "2027": {
      "shards": 93,
-     "entries": 5354
+     "entries": 5354,
+     "names": 5352
     },
     "2028": {
      "shards": 93,
-     "entries": 5354
+     "entries": 5354,
+     "names": 5352
     }
    }
   },
@@ -40,15 +46,8 @@
    "years": {
     "2026": {
      "shards": 50,
-     "entries": 7921
-    },
-    "2027": {
-     "shards": 0,
-     "entries": 0
-    },
-    "2028": {
-     "shards": 0,
-     "entries": 0
+     "entries": 7921,
+     "names": 7803
     }
    }
   }

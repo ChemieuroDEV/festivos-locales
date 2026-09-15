@@ -114,7 +114,23 @@ def main():
                 json.dump(doc, io.open(os.path.join(ydir, shard + ".json"), "w", encoding="utf-8"),
                           ensure_ascii=False, separators=(",", ":"))
                 total += len(entries)
-            stats["years"][year] = {"shards": len(shards), "entries": total}
+
+            # Indice de nombres: segunda via para cuando el codigo postal de la
+            # carga no corresponde a la ciudad. Solo nombres UNICOS en el pais:
+            # con dos municipios homonimos no hay forma de decidir y no se
+            # arriesga. Business Central lo pide solo si falla el codigo postal.
+            en_shard = collections.defaultdict(set)
+            for shard, entries in shards.items():
+                for e in entries:
+                    en_shard[e["key"]].add(shard)
+            nombres = {k: list(v)[0] for k, v in en_shard.items() if len(v) == 1}
+            json.dump({"country": iso, "year": year, "generated": index["generated"],
+                       "names": nombres},
+                      io.open(os.path.join(ydir, "_names.json"), "w", encoding="utf-8"),
+                      ensure_ascii=False, separators=(",", ":"))
+
+            stats["years"][year] = {"shards": len(shards), "entries": total,
+                                    "names": len(nombres)}
         index["countries"][iso] = stats
 
     json.dump(index, io.open(os.path.join(OUT, "index.json"), "w", encoding="utf-8"),
