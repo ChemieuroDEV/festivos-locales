@@ -70,7 +70,12 @@ def main():
 
     countries = {"PT": load("pt_holidays.json"),
                  "IT": load("it_holidays.json"),
-                 "ES": load("es_holidays_feed.json")}
+                 "ES": load("es_holidays_feed.json"),
+                 # Alemania: Maria Himmelfahrt en los municipios catolicos de
+                 # Baviera y en todo el Sarre, y Fronleichnam en los municipios
+                 # catolicos de Sajonia y Turingia. Solo van los municipios que
+                 # TIENEN alguno: para el resto, lo del Land ya lo da la API.
+                 "DE": load("de_holidays.json")}
 
     # El indice se reconstruye contando lo que hay en disco al final, no solo
     # lo generado ahora, para que refleje tambien los anos que se conservan.

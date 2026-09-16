@@ -24,10 +24,12 @@ CON_MUNICIPALES = {
     "ES": "Dos festivos locales por municipio, fijados por cada ayuntamiento.",
     "IT": "Fiesta del santo patron de cada comune.",
     "PT": "Un feriado municipal por concelho.",
-    # Solo en Baviera, Sajonia y Turingia, y segun la confesion mayoritaria del
-    # municipio (Maria Himmelfahrt, Fronleichnam). Pendiente de dato propio:
-    # OpenHolidays no lo modela.
-    "DE": "Algunos municipios de Baviera, Sajonia y Turingia.",
+    # Maria Himmelfahrt (15 de agosto) en los municipios de mayoria catolica de
+    # Baviera y en todo el Sarre; Fronleichnam en los municipios catolicos de
+    # Sajonia y Turingia. OpenHolidays no lo modela: el dato sale del buscador
+    # oficial del Bayerisches Landesamt fur Statistik y de las normas de cada
+    # Land.
+    "DE": "Maria Himmelfahrt en Baviera y el Sarre, Fronleichnam en Sajonia y Turingia, segun el municipio.",
     # Cantonales y algunos comunales. OpenHolidays trae solo unos pocos.
     "CH": "Festivos cantonales y, en algunos cantones, comunales.",
     "GR": "Fiesta del santo patron de cada ciudad.",

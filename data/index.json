@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-15",
+ "generated": "2026-09-16",
  "countries": {
   "PT": {
    "municipalities": 308,
@@ -50,6 +50,26 @@
      "names": 8827
     }
    }
+  },
+  "DE": {
+   "municipalities": 1879,
+   "years": {
+    "2026": {
+     "shards": 26,
+     "entries": 1880,
+     "names": 2357
+    },
+    "2027": {
+     "shards": 26,
+     "entries": 1880,
+     "names": 2357
+    },
+    "2028": {
+     "shards": 26,
+     "entries": 1880,
+     "names": 2357
+    }
+   }
   }
  },
  "countryFeed": [
@@ -77,8 +97,8 @@
   },
   "DE": {
    "municipal": true,
-   "note": "Algunos municipios de Baviera, Sajonia y Turingia.",
-   "published": false
+   "note": "Maria Himmelfahrt en Baviera y el Sarre, Fronleichnam en Sajonia y Turingia, segun el municipio.",
+   "published": true
   },
   "CH": {
    "municipal": true,

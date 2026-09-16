@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-15",
+ "generated": "2026-09-16",
  "countries": {
   "ES": {
    "municipal": true,
@@ -18,8 +18,8 @@
   },
   "DE": {
    "municipal": true,
-   "note": "Algunos municipios de Baviera, Sajonia y Turingia.",
-   "published": false
+   "note": "Maria Himmelfahrt en Baviera y el Sarre, Fronleichnam en Sajonia y Turingia, segun el municipio.",
+   "published": true
   },
   "CH": {
    "municipal": true,
