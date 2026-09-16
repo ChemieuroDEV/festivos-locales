@@ -16,40 +16,6 @@ que es exactamente la que consume el feed. Ademas un informe por pais.
 """
 import io, json, os, re, sys, unicodedata, datetime, collections
 
-# --- rutas dentro del repositorio (insertado por ajustar_rutas_repo.py) ------
-import os as _os, datetime as _dt
-_RAIZ = _os.path.dirname(_os.path.dirname(_os.path.abspath(__file__)))
-FUENTES = _os.path.join(_RAIZ, "fuentes")
-BUILD = _os.path.join(_RAIZ, "build")
-DATA = _os.path.join(_RAIZ, "data")
-_os.makedirs(BUILD, exist_ok=True)
-
-
-def _anio():
-    """Ano de trabajo.
-
-    Con YEARS puesto, manda YEARS. Sin YEARS, NO se decide por el calendario:
-    se mira que se ha podido descargar de verdad. Se prueba el ano siguiente y,
-    si su fichero de Aragon no esta (es el que antes publica y siempre lleva el
-    ano en el nombre), se trabaja con el ano en curso.
-
-    Decidirlo por el calendario fue un error: en septiembre de 2026 el
-    generador se puso a parsear 2027, que casi ninguna comunidad habia
-    publicado, y el feed perdio provincias enteras."""
-    env = (_os.environ.get("YEARS") or "").strip()
-    if env:
-        return int(env.replace(" ", "").split(",")[0])
-    hoy = _dt.date.today()
-    siguiente = hoy.year + 1
-    marcador = _os.path.join(FUENTES, "ara_%d.csv" % siguiente)
-    if _os.path.exists(marcador) and _os.path.getsize(marcador) > 5000:
-        return siguiente
-    return hoy.year
-
-
-ANIO = _anio()
-# ----------------------------------------------------------------------------
-
 HERE = os.path.dirname(os.path.abspath(__file__))
 YEARS = [2026, 2027, 2028]
 
@@ -72,8 +38,8 @@ def norm_key(s):
 
 # --------------------------------------------------------------- PORTUGAL
 def build_pt():
-    fer = json.load(io.open(os.path.join(BUILD, "pt_feriados_raw.json"), encoding="utf-8"))
-    cps = json.load(io.open(os.path.join(BUILD, "pt_concelho_cp.json"), encoding="utf-8"))
+    fer = json.load(io.open(os.path.join(HERE, "pt_feriados_raw.json"), encoding="utf-8"))
+    cps = json.load(io.open(os.path.join(HERE, "pt_concelho_cp.json"), encoding="utf-8"))
     cps_norm = {norm_key(k): v for k, v in cps.items()}
 
     out, sin_cp = [], []
@@ -183,61 +149,23 @@ def clean_patrono(nombre):
 
 
 def build_it():
-    pat = json.load(io.open(os.path.join(BUILD, "it_patroni_raw.json"), encoding="utf-8"))
-    comuni = json.load(io.open(os.path.join(FUENTES, "comuni_it.json"), encoding="utf-8"))
-    by_codice = {c["codice"]: c for c in comuni}
+    """Italia se construye en it_festivi.py.
 
-    # Subdivision de OpenHolidays: IT-<REGION>-<PROVINCIA> con las siglas que
-    # usa la API. Se construye desde el arbol ya descargado.
-    subs = {}
-    try:
-        tree = json.load(io.open(os.path.join(FUENTES, "subdiv_IT.json"), encoding="utf-8"))
-
-        def walk(nodes):
-            for n in nodes:
-                nm = [x["text"] for x in n.get("name", [])]
-                iso = n.get("isoCode", "")
-                if iso.startswith("IT-") and len(iso) == 5:
-                    subs[iso[3:]] = n["code"]   # sigla de provincia -> codigo completo
-                walk(n.get("children", []))
-        walk(tree)
-    except Exception as e:
-        print("aviso: sin subdivisiones IT:", e)
-
-    out, descartes = [], collections.Counter()
-    for codice, v in pat.items():
-        fest = (v.get("festivo") or "").strip()
-        if not fest or fest.startswith("|") or "=" in fest:
-            descartes["infobox sin campo Festivo"] += 1
-            continue
-        c = by_codice.get(codice)
-        if not c:
-            descartes["comune sin CAP"] += 1
-            continue
-
-        hol, motivo = [], None
-        for y in YEARS:
-            iso, why = parse_festivo(fest, y)
-            if iso:
-                nombre = clean_patrono(v.get("patrono") or "")
-                hol.append({"year": y, "date": iso, "name": nombre})
-            else:
-                motivo = why
-        if not hol:
-            descartes[motivo.split(":")[0] if motivo else "sin fecha"] += 1
-            continue
-
-        out.append({"key": norm_key(v["nome"]), "name": v["nome"],
-                    "sub": subs.get(c.get("sigla", ""), ""),
-                    "pc": sorted(c.get("cap", [])), "holidays": hol})
-    return out, descartes
+    Se saco de aqui cuando el parseo italiano crecio (fechas multiples, reglas
+    de domingo, fiestas de la Pascua, y la lectura del wikitexto crudo en vez
+    del valor ya limpiado). Portugal no tiene nada que ver con eso y sigue
+    intacto arriba. El informe detallado de Italia lo escribe `python
+    it_festivi.py` en it_report.txt; aqui solo se resume.
+    """
+    from it_festivi import build_it as _build_it
+    return _build_it()
 
 
 def main():
-    rep = io.open(os.path.join(BUILD, "pt_it_report.txt"), "w", encoding="utf-8")
+    rep = io.open(os.path.join(HERE, "pt_it_report.txt"), "w", encoding="utf-8")
 
     pt, sin_cp = build_pt()
-    json.dump(pt, io.open(os.path.join(BUILD, "pt_holidays.json"), "w", encoding="utf-8"),
+    json.dump(pt, io.open(os.path.join(HERE, "pt_holidays.json"), "w", encoding="utf-8"),
               ensure_ascii=False)
     rep.write("== PORTUGAL ==\n")
     rep.write("concelhos: %d\n" % len(pt))
@@ -251,7 +179,7 @@ def main():
         rep.write("  CHECK %s -> %s\n" % (nombre, [h for h in f[0]["holidays"] if h["year"] == 2026] if f else "NO ESTA"))
 
     it, descartes = build_it()
-    json.dump(it, io.open(os.path.join(BUILD, "it_holidays.json"), "w", encoding="utf-8"),
+    json.dump(it, io.open(os.path.join(HERE, "it_holidays.json"), "w", encoding="utf-8"),
               ensure_ascii=False)
     rep.write("\n== ITALIA ==\n")
     rep.write("comuni con festivo resuelto: %d\n" % len(it))
@@ -272,7 +200,7 @@ def main():
         dup = [k for k, n in c.items() if n > 1]
         rep.write("\n%s claves duplicadas: %d %s\n" % (pais, len(dup), dup[:15]))
     rep.close()
-    print(io.open(os.path.join(BUILD, "pt_it_report.txt"), encoding="utf-8").read())
+    print(io.open(os.path.join(HERE, "pt_it_report.txt"), encoding="utf-8").read())
 
 
 if __name__ == "__main__":

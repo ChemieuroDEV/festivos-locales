@@ -22,22 +22,22 @@
    }
   },
   "IT": {
-   "municipalities": 5354,
+   "municipalities": 6897,
    "years": {
     "2026": {
      "shards": 93,
-     "entries": 5354,
-     "names": 5352
+     "entries": 6897,
+     "names": 6912
     },
     "2027": {
      "shards": 93,
-     "entries": 5354,
-     "names": 5352
+     "entries": 6897,
+     "names": 6912
     },
     "2028": {
      "shards": 93,
-     "entries": 5354,
-     "names": 5352
+     "entries": 6897,
+     "names": 6912
     }
    }
   },
