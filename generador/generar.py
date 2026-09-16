@@ -54,6 +54,7 @@ PASOS = [
     ("Portugal: feriados municipales y codigos postales", "preparar_pt"),
     ("Espana: parsear las 17 comunidades", "parse_es"),
     ("Espana: cruzar con codigos postales", "cruzar_es"),
+    ("Espana: completar el codigo de subdivision", "completar_sub_es"),
     ("Portugal e Italia", "parse_pt_it"),
     ("Repartir en ficheros por pais, ano y prefijo postal", "build_feed"),
 ]
