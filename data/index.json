@@ -83,32 +83,38 @@
   "ES": {
    "municipal": true,
    "note": "Dos festivos locales por municipio, fijados por cada ayuntamiento.",
-   "published": true
+   "published": true,
+   "complete": false
   },
   "IT": {
    "municipal": true,
    "note": "Fiesta del santo patron de cada comune.",
-   "published": true
+   "published": true,
+   "complete": false
   },
   "PT": {
    "municipal": true,
    "note": "Un feriado municipal por concelho.",
-   "published": true
+   "published": true,
+   "complete": true
   },
   "DE": {
    "municipal": true,
    "note": "Maria Himmelfahrt en Baviera y el Sarre, Fronleichnam en Sajonia y Turingia, segun el municipio.",
-   "published": true
+   "published": true,
+   "complete": true
   },
   "CH": {
    "municipal": true,
    "note": "Festivos cantonales y, en algunos cantones, comunales.",
-   "published": false
+   "published": false,
+   "complete": false
   },
   "GR": {
    "municipal": true,
    "note": "Fiesta del santo patron de cada ciudad.",
    "published": false,
+   "complete": false,
    "countryFeed": true
   },
   "FR": {

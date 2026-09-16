@@ -74,6 +74,24 @@ SIN_MUNICIPALES = {
 # Navidad). Para estos, el feed publica _country.json con lo nacional.
 SIN_OPENHOLIDAYS = ["GB", "FI", "DK", "NO", "GR"]
 
+# Paises cuyo feed es COMPLETO, en el sentido que le importa a quien lo
+# consulta: si un municipio de ese pais no aparece en el feed, se puede
+# concluir que NO tiene festivos municipales, y no que nos falte el dato.
+#
+#   - Alemania: el feed es una lista de EXCEPCIONES a proposito. Solo estan los
+#     1.879 municipios que tienen Maria Himmelfahrt o Fronleichnam; los otros
+#     8.000 y pico no tienen ninguno de los dos, y para ellos basta con los
+#     festivos del Land. Que un municipio aleman no aparezca es la respuesta,
+#     no una laguna.
+#   - Portugal: los 308 concelhos, todos.
+#
+# Espana e Italia NO estan: ahi faltan municipios de verdad. En Espana, porque
+# algunos ayuntamientos aun no han comunicado sus fiestas del ano (Argentona,
+# Calaf o Cardona estan en el dataset de 2025 y no en el de 2026). En Italia,
+# porque el patron sale del infobox de Wikipedia y no todos los comuni lo
+# tienen. En esos dos casos, "no encontrado" si merece un aviso en pantalla.
+FEED_COMPLETO = ["DE", "PT"]
+
 
 def construir(con_municipales_publicados, con_country_json):
     """Metadatos listos para publicar.
@@ -86,7 +104,8 @@ def construir(con_municipales_publicados, con_country_json):
     out = {}
     for iso, nota in CON_MUNICIPALES.items():
         out[iso] = {"municipal": True, "note": nota,
-                    "published": iso in con_municipales_publicados}
+                    "published": iso in con_municipales_publicados,
+                    "complete": iso in FEED_COMPLETO}
     for iso, nota in SIN_MUNICIPALES.items():
         out[iso] = {"municipal": False, "note": nota, "published": False}
     for iso in con_country_json:
